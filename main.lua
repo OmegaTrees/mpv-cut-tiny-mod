@@ -213,12 +213,14 @@ local function put_time()
 end
 
 local function cut_to_end()
+	local duration = mp.get_property_number("duration")
 	if not START_TIME then
-		print("No start time set. Press 'c' first.")
+		-- Set start time to 0 (beginning of video)
+		START_TIME = 0
+		text_overlay_on()
 		return
 	end
 	text_overlay_off()
-	local duration = mp.get_property_number("duration")
 	if duration and duration > START_TIME then
 		cut(START_TIME, duration)
 		START_TIME = nil
