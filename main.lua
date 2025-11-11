@@ -1,7 +1,3 @@
--- NOTE TO FUTURE SELF:
--- To view debug logs when launching through Finder,
--- use the ` key in mpv instead of viewing ~/Library/Logs/mpv.log.
-
 mp.msg.info("MPV-CUT LOADED")
 
 utils = require "mp.utils"
@@ -22,14 +18,6 @@ local function table_to_str(o)
 	else
 		return tostring(o)
 	end
-end
-
-local result = mp.command_native({ name = "subprocess", args = {"ffmpeg"}, playback_only = false, capture_stdout = true, capture_stderr = true })
-mp.msg.info("Your PATH: " .. os.getenv('PATH'))
-if result.status ~= 1 then
-	mp.osd_message("FFmpeg failed to run, please press ` for debug info", 5)
-	mp.msg.error("FFmpeg failed to run:\n" .. table_to_str(result))
-	mp.msg.error("`which ffmpeg` output:\n" .. table_to_str(mp.command_native({ name = "subprocess", args = {"which", "ffmpeg"}, playback_only = false, capture_stdout = true, capture_stderr = true })))
 end
 
 local function to_hms(seconds)
@@ -121,6 +109,7 @@ CHANNEL = 1
 CHANNEL_NAMES = {}
 
 KEY_CUT = "c"
+KEY_CUT_TO_END = "q"
 KEY_CANCEL_CUT = "C"
 KEY_CYCLE_ACTION = "a"
 KEY_BOOKMARK_ADD = "i"
@@ -223,6 +212,22 @@ local function put_time()
 	end
 end
 
+local function cut_to_end()
+	if not START_TIME then
+		print("No start time set. Press 'c' first.")
+		return
+	end
+	text_overlay_off()
+	local duration = mp.get_property_number("duration")
+	if duration and duration > START_TIME then
+		cut(START_TIME, duration)
+		START_TIME = nil
+	else
+		print("INVALID")
+		START_TIME = nil
+	end
+end
+
 local function cancel_cut()
 	text_overlay_off()
 	START_TIME = nil
@@ -281,6 +286,7 @@ local function channel_dec()
 end
 
 mp.add_key_binding(KEY_CUT, "cut", put_time)
+mp.add_key_binding(KEY_CUT_TO_END, "cut_to_end", cut_to_end)
 mp.add_key_binding(KEY_CANCEL_CUT, "cancel_cut", cancel_cut)
 mp.add_key_binding(KEY_BOOKMARK_ADD, "bookmark_add", bookmark_add)
 mp.add_key_binding(KEY_CHANNEL_INC, "channel_inc", channel_inc)
