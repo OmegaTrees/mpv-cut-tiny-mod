@@ -1,4 +1,13 @@
-# mpv-cut
+# mpv-cut-tiny-mod
+(((((Press c at your desired start point (the overlay shows you've set a start time)
+Then you have two options:
+
+Press c again at any point to cut from start to that current position
+Press q to automatically cut from start to the end of the video (no need to seek to the end!)
+
+
+
+The q key will use the video's duration property as the end point, so you don't have to manually navigate to the exact end and risk the video stopping. If you haven't pressed c first to set a start time, pressing q will just show a message telling you to set the start time first.)))))
 
 This extension allows you to:
 
